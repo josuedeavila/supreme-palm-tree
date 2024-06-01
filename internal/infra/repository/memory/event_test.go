@@ -1,10 +1,10 @@
-package repository_test
+package memory_test
 
 import (
 	"testing"
 
 	"github.com/josuedeavila/supreme-palm-tree/internal/entity"
-	"github.com/josuedeavila/supreme-palm-tree/internal/infra/repository"
+	repository "github.com/josuedeavila/supreme-palm-tree/internal/infra/repository/memory"
 
 	"github.com/matryer/is"
 )
