@@ -34,4 +34,19 @@ func TestBalancerRepository_Methods(t *testing.T) {
 		is.NoErr(err)
 		is.Equal(balance.Amount, 100)
 	})
+
+	t.Run("delete all balances", func(t *testing.T) {
+		is := is.New(t)
+		repo := repository.NewBalanceRepository()
+		_, err := repo.Update(1, 100)
+		is.NoErr(err)
+
+		err = repo.DeleteAll()
+		is.NoErr(err)
+
+		balance, err := repo.Get(1)
+		is.True(balance == nil)
+		is.True(strings.Contains(err.Error(), "balance not found"))
+	})
+
 }

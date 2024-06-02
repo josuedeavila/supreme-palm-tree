@@ -10,4 +10,5 @@ type Balance struct {
 type BalanceRepository interface {
 	Get(accountID int) (*Balance, error)
 	Update(accountID int, amount int) (*Balance, error)
+	DeleteAll() error
 }

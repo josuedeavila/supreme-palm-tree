@@ -45,3 +45,11 @@ func (r *BalanceRepository) Update(accountID int, amount int) (*entity.Balance, 
 	balance.Amount += amount
 	return balance, nil
 }
+
+// DeleteAll deletes all balances
+func (r *BalanceRepository) DeleteAll() error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.data = make(map[int]*entity.Balance)
+	return nil
+}

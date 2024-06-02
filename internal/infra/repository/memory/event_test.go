@@ -24,4 +24,14 @@ func TestEventRepository_Methods(t *testing.T) {
 		is.NoErr(err)
 		is.True(event.ID == 0)
 	})
+
+	t.Run("delete all events", func(t *testing.T) {
+		is := is.New(t)
+		repo := repository.NewEventRepository()
+		event := &entity.Event{}
+		_, err := repo.Create(event)
+		is.NoErr(err)
+		err = repo.DeleteAll()
+		is.NoErr(err)
+	})
 }

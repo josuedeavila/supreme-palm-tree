@@ -29,3 +29,12 @@ func (r *EventRepository) Create(event *entity.Event) (*entity.Event, error) {
 	r.nextID++
 	return event, nil
 }
+
+// Get retrieves an event by ID
+func (r *EventRepository) DeleteAll() error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.data = make(map[int]*entity.Event)
+	r.nextID = 0
+	return nil
+}
