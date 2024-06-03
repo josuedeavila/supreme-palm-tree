@@ -2,6 +2,7 @@ package event
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/josuedeavila/supreme-palm-tree/internal/interface/controller/dto"
 	"github.com/josuedeavila/supreme-palm-tree/internal/usecase/event"
@@ -18,8 +19,11 @@ func (eh *eventHandler) PostHandler(ctx *gin.Context) {
 	}
 	result, err := eh.useCases.Create(event)
 	if err != nil {
-		// TODO: deal with different kind of errors
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		if strings.Contains(err.Error(), "balance not found") {
+			ctx.String(http.StatusNotFound, "0")
+			return
+		}
+		ctx.String(http.StatusInternalServerError, "0")
 		return
 	}
 
@@ -31,15 +35,15 @@ func (eh *eventHandler) PostHandler(ctx *gin.Context) {
 	output := dto.EventOutput{}
 	if result.Origin != nil {
 		output.Origin = &dto.TransactionResult{
-			ID:     result.Origin.ID,
-			Amount: result.Origin.Amount,
+			ID:      result.Origin.ID,
+			Balance: result.Origin.Balance,
 		}
 	}
 
 	if result.Destination != nil {
 		output.Destination = &dto.TransactionResult{
-			ID:     result.Destination.ID,
-			Amount: result.Destination.Amount,
+			ID:      result.Destination.ID,
+			Balance: result.Destination.Balance,
 		}
 	}
 

@@ -33,8 +33,8 @@ func TestCreateEvent(t *testing.T) {
 		useCase := fake.NewUseCases(func(e *usecaseEvent.Event) (*usecaseEvent.EventOutput, error) {
 			return &usecaseEvent.EventOutput{
 				Destination: &usecaseEvent.TransactionResult{
-					ID:     "0",
-					Amount: 100,
+					ID:      "0",
+					Balance: 100,
 				},
 			}, nil
 		})
@@ -46,7 +46,7 @@ func TestCreateEvent(t *testing.T) {
 
 		output := new(bytes.Buffer)
 		json.Compact(output, w.Body.Bytes())
-		is.Equal(output.String(), `{"destination":{"id":"0","amount":100}}`)
+		is.Equal(output.String(), `{"destination":{"id":"0","balance":100}}`)
 	})
 
 	t.Run("withdraw success", func(t *testing.T) {
@@ -65,8 +65,8 @@ func TestCreateEvent(t *testing.T) {
 		useCase := fake.NewUseCases(func(e *usecaseEvent.Event) (*usecaseEvent.EventOutput, error) {
 			return &usecaseEvent.EventOutput{
 				Origin: &usecaseEvent.TransactionResult{
-					ID:     "0",
-					Amount: 100,
+					ID:      "0",
+					Balance: 100,
 				},
 			}, nil
 		})
@@ -78,7 +78,7 @@ func TestCreateEvent(t *testing.T) {
 
 		output := new(bytes.Buffer)
 		json.Compact(output, w.Body.Bytes())
-		is.Equal(output.String(), `{"origin":{"id":"0","amount":100}}`)
+		is.Equal(output.String(), `{"origin":{"id":"0","balance":100}}`)
 	})
 
 	t.Run("transfer success", func(t *testing.T) {
@@ -98,12 +98,12 @@ func TestCreateEvent(t *testing.T) {
 		useCase := fake.NewUseCases(func(e *usecaseEvent.Event) (*usecaseEvent.EventOutput, error) {
 			return &usecaseEvent.EventOutput{
 				Origin: &usecaseEvent.TransactionResult{
-					ID:     "0",
-					Amount: 100,
+					ID:      "0",
+					Balance: 100,
 				},
 				Destination: &usecaseEvent.TransactionResult{
-					ID:     "1",
-					Amount: 100,
+					ID:      "1",
+					Balance: 100,
 				},
 			}, nil
 		})
@@ -115,7 +115,7 @@ func TestCreateEvent(t *testing.T) {
 
 		output := new(bytes.Buffer)
 		json.Compact(output, w.Body.Bytes())
-		is.Equal(output.String(), `{"origin":{"id":"0","amount":100},"destination":{"id":"1","amount":100}}`)
+		is.Equal(output.String(), `{"origin":{"id":"0","balance":100},"destination":{"id":"1","balance":100}}`)
 	})
 
 	t.Run("invalid event", func(t *testing.T) {

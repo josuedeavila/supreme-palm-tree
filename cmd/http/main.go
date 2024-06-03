@@ -14,6 +14,7 @@ import (
 	"github.com/go-playground/log"
 
 	component "github.com/josuedeavila/supreme-palm-tree/internal"
+	"github.com/josuedeavila/supreme-palm-tree/internal/infra/repository/memory"
 )
 
 const (
@@ -28,8 +29,10 @@ var (
 func main() {
 	ctx := context.Background()
 
+	balance := memory.NewBalanceRepository()
+	event := memory.NewEventRepository()
 	// component
-	c := component.New(nil, nil)
+	c := component.New(balance, event)
 
 	// create engine
 	engine := gin.New()

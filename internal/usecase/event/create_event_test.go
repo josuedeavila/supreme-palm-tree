@@ -85,9 +85,9 @@ func TestUseCase_Create(t *testing.T) {
 
 		input := &event.Event{
 			Type:        "deposit",
-			Origin:      "1",
+			Origin:      "",
 			Amount:      100,
-			Destination: "",
+			Destination: "1",
 		}
 		event, err := useCase.Create(input)
 		is.NoErr(err)

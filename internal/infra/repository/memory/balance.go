@@ -42,7 +42,7 @@ func (r *BalanceRepository) Update(accountID int, amount int) (*entity.Balance, 
 		}
 		r.data[accountID] = balance
 	}
-	balance.Amount += amount
+	balance.Amount = amount
 	return balance, nil
 }
 

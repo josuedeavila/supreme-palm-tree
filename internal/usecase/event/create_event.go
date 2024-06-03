@@ -55,73 +55,79 @@ func (uc *useCases) DoTransaction(event *entity.Event) (*EventOutput, error) {
 }
 
 func (uc *useCases) processDeposit(event *entity.Event) (*EventOutput, error) {
-	err := uc.updateBalance(event.Origin, event.Amount, true)
+	b, err := uc.updateBalance(event.Destination, event.Amount)
 	if err != nil {
 		return nil, err
 	}
 
 	return &EventOutput{
 		Destination: &TransactionResult{
-			ID:     event.Destination,
-			Amount: event.Amount,
+			ID:      event.Destination,
+			Balance: b,
 		},
 	}, nil
 }
 
 func (uc *useCases) processWithdraw(event *entity.Event) (*EventOutput, error) {
-	err := uc.updateBalance(event.Origin, -event.Amount, true)
+	balance, err := uc.updateBalance(event.Origin, -event.Amount)
 	if err != nil {
 		return nil, err
 	}
 
 	return &EventOutput{
 		Origin: &TransactionResult{
-			ID:     event.Origin,
-			Amount: event.Amount,
+			ID:      event.Origin,
+			Balance: balance,
 		},
 	}, nil
 }
 
 func (uc *useCases) processTransfer(event *entity.Event) (*EventOutput, error) {
-	err := uc.updateBalance(event.Origin, -event.Amount, true)
+	originBalance, err := uc.updateBalance(event.Origin, -event.Amount)
 	if err != nil {
 		return nil, err
 	}
-	err = uc.updateBalance(event.Destination, event.Amount, true)
+	destinationBalance, err := uc.updateBalance(event.Destination, event.Amount)
 	if err != nil {
 		return nil, err
 	}
 
 	return &EventOutput{
 		Origin: &TransactionResult{
-			ID:     event.Origin,
-			Amount: event.Amount,
+			ID:      event.Origin,
+			Balance: originBalance,
 		},
 		Destination: &TransactionResult{
-			ID:     event.Destination,
-			Amount: event.Amount,
+			ID:      event.Destination,
+			Balance: destinationBalance,
 		},
 	}, nil
 }
 
-func (uc *useCases) updateBalance(account string, amount int, update bool) error {
+func (uc *useCases) updateBalance(account string, amount int) (int, error) {
 	accountInt, err := strconv.Atoi(account)
 	if err != nil {
-		return fmt.Errorf("could not convert account to int: %w", err)
+		return 0, fmt.Errorf("could not convert account to int: %w", err)
 	}
 
 	balance, err := uc.balaceRepository.Get(accountInt)
 	if err != nil {
-		return fmt.Errorf("could not get balance: %w", err)
-	}
-
-	balance.Amount += amount
-	if update {
-		_, err = uc.balaceRepository.Update(accountInt, balance.Amount)
-		if err != nil {
-			return fmt.Errorf("could not update balance: %w", err)
+		if err.Error() == "balance not found" && amount < 0 {
+			return 0, fmt.Errorf("could not get balance: %w", err)
 		}
 	}
 
-	return nil
+	if balance == nil {
+		balance = &entity.Balance{
+			AccountID: accountInt,
+			Amount:    0,
+		}
+	}
+
+	balance.Amount += amount
+	newBalance, err := uc.balaceRepository.Update(accountInt, balance.Amount)
+	if err != nil {
+		return 0, fmt.Errorf("could not update balance: %w", err)
+	}
+	return newBalance.Amount, nil
 }

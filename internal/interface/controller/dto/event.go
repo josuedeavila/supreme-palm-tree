@@ -17,6 +17,6 @@ type EventOutput struct {
 
 // TransactionResult model
 type TransactionResult struct {
-	ID     string `json:"id"`
-	Amount int    `json:"amount"`
+	ID      string `json:"id"`
+	Balance int    `json:"balance"`
 }
